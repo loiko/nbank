@@ -1,0 +1,115 @@
+###  Positive test: admin can crete new user with correct data YWRtaW46YWRtaW4=
+
+POST http://localhost:4111/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
+
+###  Negative test: admin cannot crete new user with blank username
+
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "  ",
+      "password": "123Kl543@",
+      "role": "USER"
+}
+
+###  Negative test: admin cannot crete new user using usernameme with 2 or 16 characters
+
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "abavavavavavavav",
+      "password": "123Kl543@",
+      "role": "USER"
+}
+
+###  Negative test: admin cannot crete new user using usernameme with specia; characters
+
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "abavavav@",
+      "password": "123Kl543@",
+      "role": "USER"
+}
+
+
+### Positive test: create new user by admin, auth - bmlrOm5pazFMITM0OQ==
+
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "nik",
+      "password": "nik1L!349",
+      "role": "USER"
+}
+
+### Negative test: create new user by admin that already exist
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "nik",
+      "password": "nik1L!349",
+      "role": "USER"
+}
+
+### Negative test: create new user by admin that already exist
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "nik",
+      "password": "nik1L!349",
+      "role": "USER"
+}
+
+###  Negative test: admin cannot crete new user using with blank password
+
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "testname1",
+      "password": "  ",
+      "role": "USER"
+}
+
+###  Negative test: admin cannot crete new user using password less than 8 chr
+
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+     "username": "testname1",
+      "password": "5K!e4gd",
+      "role": "USER"
+}
+
+
+### Positive test: create new account by auth user
+POST http://localhost:4111/api/v1/accounts
+Content-Type: application/json
+Authorization: Basic bmlrOm5pazFMITM0OQ==
+
+### Positive test: check account was created
+GET http://localhost:4111/api/v1/customer/accounts
+Content-Type: application/json
+Authorization: Basic bmlrOm5pazFMITM0OQ==
