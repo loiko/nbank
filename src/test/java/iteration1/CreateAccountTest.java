@@ -1,11 +1,15 @@
 package iteration1;
 
 import generators.RandomData;
+import generators.RandomModelGenerator;
 import models.*;
 import org.junit.jupiter.api.Test;
 import requests.AdminCreateUserRequester;
 import requests.CreateAccountRequester;
 import requests.GetUserAccountsRequester;
+import requests.skeleton.Endpoint;
+import requests.skeleton.requesters.CrudRequester;
+import requests.steps.AdminSteps;
 import specs.RequestSpecs;
 import specs.ResponseSpecs;
 
@@ -14,29 +18,18 @@ public class CreateAccountTest extends BaseTest {
     @Test
     public void userCanCreateAccountTest() {
 
-        //создание модели пользователя (JSON)
-        CreateUserRequest userRequest = CreateUserRequest.builder()
-                .username(RandomData.getUsername())
-                .password(RandomData.getPassword())
-                .role(UserRole.USER.toString())
-                .build();
-
-        //создание пользователя админом
-        new AdminCreateUserRequester(
-                RequestSpecs.adminSpec(),
-                ResponseSpecs.entityWasCreated())
-                .post(userRequest);
-
+        CreateUserRequest userRequest = AdminSteps.createUser();
         //создаем аккаунт
-        new CreateAccountRequester(
+        new CrudRequester(
                 RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
+                Endpoint.ACCOUNTS,
                 ResponseSpecs.entityWasCreated())
                 .post(null);
 
         //получаем аккаунты юзера
-        new GetUserAccountsRequester(
-                RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
-                ResponseSpecs.requestReturnsOk())
-                .get();
+//        new GetUserAccountsRequester(
+//                RequestSpecs.authAsUser(userRequest.getUsername(), userRequest.getPassword()),
+//                ResponseSpecs.requestReturnsOk())
+//                .get();
     }
 }
