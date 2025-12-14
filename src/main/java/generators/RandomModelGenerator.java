@@ -58,7 +58,6 @@ public class RandomModelGenerator {
         } else if (type.equals(Date.class)) {
             return new Date(System.currentTimeMillis() - random.nextInt(1000000000));
         } else {
-            // Вложенный объект
             return generate(type);
         }
     }
@@ -76,7 +75,6 @@ public class RandomModelGenerator {
     }
 
     private static List<String> generateRandomList(Field field) {
-        // Пытаемся определить generic-параметр списка
         Type genericType = field.getGenericType();
         if (genericType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) genericType;

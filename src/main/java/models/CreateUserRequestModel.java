@@ -6,12 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//модель для JSON request (т.е. делаем среиализацию и десирализацию объект - json)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateUserRequest extends BaseModel {
+public class CreateUserRequestModel extends BaseModel {
     @GeneratingRule(regex = "^[A-Za-z0-9]{3,15}$")
     private String username;
     @GeneratingRule(regex = "^[A-Z]{3}[a-z]{4}[0-9]{3}[$%&]{2}$")

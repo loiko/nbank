@@ -11,33 +11,51 @@ import requests.skeleton.interfaces.CrudEndpointInterface;
 import static io.restassured.RestAssured.given;
 
 public class CrudRequester extends HttpRequest implements CrudEndpointInterface {
-
     public CrudRequester(RequestSpecification requestSpecification, Endpoint endpoint, ResponseSpecification responseSpecification) {
         super(requestSpecification, endpoint, responseSpecification);
     }
 
-    //используем для негативных тестов
     @Override
     public ValidatableResponse post(BaseModel model) {
         var body = model == null ? "" : model;
         return given()
                 .spec(requestSpecification)
-                .body(body)
+                .body(body)//вместо хэдера и контентайпов
                 .post(endpoint.getUrl())
                 .then()
                 .assertThat()
                 .spec(responseSpecification);
     }
 
-    //самостоятельно реализовать
     @Override
-    public Object get(long id) {
-        return null;
+    public ValidatableResponse get() {
+        return given()
+                .spec(requestSpecification)
+                .get(endpoint.getUrl())
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
     }
 
     @Override
-    public Object update(long id, BaseModel model) {
-        return null;
+    public ValidatableResponse get(long id) {
+        return given()
+                .spec(requestSpecification)
+                .get(endpoint.getUrl(), id)
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
+    }
+
+    @Override
+    public ValidatableResponse put(BaseModel model) {
+        return given()
+                .spec(requestSpecification)
+                .body(model)//вместо хэдера и контентайпов
+                .put(endpoint.getUrl())
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
     }
 
     @Override

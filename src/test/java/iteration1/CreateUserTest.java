@@ -1,21 +1,19 @@
 package iteration1;
 
-import generators.RandomData;
 import generators.RandomModelGenerator;
-import models.CreateUserRequest;
-import models.CreateUserResponse;
-import models.UserRole;
+import models.CreateUserRequestModel;
+import models.CreateUserResponseModel;
 import models.comparison.ModelAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.AdminCreateUserRequester;
 import requests.skeleton.Endpoint;
 import requests.skeleton.requesters.CrudRequester;
 import requests.skeleton.requesters.ValidatedCrudRequester;
 import specs.RequestSpecs;
 import specs.ResponseSpecs;
+import utilities.BaseTest;
 
 import java.util.stream.Stream;
 
@@ -23,20 +21,15 @@ public class CreateUserTest extends BaseTest {
 
     @Test
     public void adminCanCreateUserWithValidDataTest() {
-        CreateUserRequest userRequest = RandomModelGenerator.generate(CreateUserRequest.class);
+        CreateUserRequestModel userRequest = RandomModelGenerator.generate(CreateUserRequestModel.class);
 
-        CreateUserResponse createUserResponse = new ValidatedCrudRequester<CreateUserResponse>
+        CreateUserResponseModel createUserResponse = new ValidatedCrudRequester<CreateUserResponseModel>
                 (RequestSpecs.adminSpec(),
                 Endpoint.ADMIN_USER,
                 ResponseSpecs.entityWasCreated())
                 .post(userRequest);
 
         ModelAssertions.assertThatModels(userRequest, createUserResponse).match();
-
-//        softly.assertThat(userRequest.getUsername()).isEqualTo(createUserResponse.getUsername());
-//        softly.assertThat(userRequest.getPassword()).isNotEqualTo(createUserResponse.getPassword());
-//        softly.assertThat(userRequest.getRole()).isEqualTo(createUserResponse.getRole());
-
     }
 
     public static Stream<Arguments> userInvalidData() {
@@ -48,7 +41,7 @@ public class CreateUserTest extends BaseTest {
     @MethodSource("userInvalidData")
     @ParameterizedTest
     public void adminCannotCreateUserWithInvalidDataTest(String username, String password, String role, String errorKey, String errorValue) {
-        CreateUserRequest userRequest = CreateUserRequest.builder()
+        CreateUserRequestModel userRequest = CreateUserRequestModel.builder()
                 .username(username)
                 .password(password)
                 .role(role)

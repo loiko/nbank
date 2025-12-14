@@ -15,21 +15,24 @@ public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest imp
         this.crudRequester = new CrudRequester(requestSpecification, endpoint, responseSpecification);
     }
 
-
-    //используем для позитивных тестов
     @Override
     public T post(BaseModel model) {
         return (T) crudRequester.post(model).extract().as(endpoint.getResponseModel());
     }
 
     @Override
-    public Object get(long id) {
-        return null;
+    public T get() {
+        return (T) crudRequester.get().extract().as(endpoint.getResponseModel());
     }
 
     @Override
-    public Object update(long id, BaseModel model) {
-        return null;
+    public T get(long id) {
+        return (T) crudRequester.get(id).extract().as(endpoint.getResponseModel());
+    }
+
+    @Override
+    public T put(BaseModel model) {
+        return (T) crudRequester.put(model).extract().as(endpoint.getResponseModel());
     }
 
     @Override
