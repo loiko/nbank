@@ -1,77 +1,41 @@
 package iteration1;
 
-import io.restassured.RestAssured;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.http.ContentType;
-import org.apache.http.HttpStatus;
+import models.CreateUserRequestModel;
+import models.CreateUserResponseModel;
+import models.LoginUserRequestModel;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import requests.skeleton.Endpoint;
+import requests.skeleton.requesters.CrudRequester;
+import requests.skeleton.requesters.ValidatedCrudRequester;
+import requests.steps.AdminSteps;
+import specs.RequestSpecs;
+import specs.ResponseSpecs;
+import utilities.BaseTest;
 
-import java.util.List;
+public class LoginUserTest extends BaseTest {
 
-import static io.restassured.RestAssured.given;
-
-public class LoginUserTest {
-    @BeforeAll
-    public static void setUpRestAssured() {
-        RestAssured.filters(
-                List.of(new RequestLoggingFilter(),
-                        new ResponseLoggingFilter())
-        );
-    }
-
-   @Test
+    @Test
     public void adminCanGenerateAuthTokenTest() {
-        given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .body("""
-                        {
-                        "username": "admin",
-                        "password": "admin"
-                        }
-                        """)
-                .post("http://localhost:4111/api/v1/auth/login")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.SC_OK)
-                .header("Authorization", "Basic YWRtaW46YWRtaW4=");
+        LoginUserRequestModel userRequest = LoginUserRequestModel.builder()
+                .username("admin")
+                .password("admin")
+                .build();
+
+        new ValidatedCrudRequester<CreateUserResponseModel>(RequestSpecs.unAuthSpec(),
+                Endpoint.LOGIN,
+                ResponseSpecs.requestReturnsOk())
+                .post(userRequest);
     }
 
-   @Test
+    @Test
     public void userCanGenerateAuthTokenTest() {
-        //создание пользователя
-        given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .header("Authorization", "Basic YWRtaW46YWRtaW4=")
-                .body("""
-                        {
-                        "username": "nikolare",
-                        "password": "2kO!RiodP",
-                        "role": "USER"
-                        }
-                        """)
-                .post("http://localhost:4111/api/v1/admin/users")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.SC_CREATED);
+        CreateUserRequestModel userRequest = AdminSteps.createUser();
 
-        given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .body("""
-                        {
-                        "username": "nikolare",
-                        "password": "2kO!RiodP"
-                        }
-                        """)
-                .post("http://localhost:4111/api/v1/auth/login")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.SC_OK)
+        new CrudRequester(RequestSpecs.unAuthSpec(),
+                Endpoint.LOGIN,
+                ResponseSpecs.requestReturnsOk())
+                .post(LoginUserRequestModel.builder().username(userRequest.getUsername()).password(userRequest.getPassword()).build())
                 .header("Authorization", Matchers.notNullValue());
     }
 }
