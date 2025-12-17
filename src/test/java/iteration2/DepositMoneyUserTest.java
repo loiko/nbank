@@ -133,7 +133,7 @@ public class DepositMoneyUserTest extends BaseTest {
         AccountResponseModel account = UserSteps.createAccount(user);
 
         DepositRequestModel depositRequest = DepositRequestModel.builder()
-                .id(3000)
+                .id(RandomData.getNonExistingAccountId())
                 .balance(RandomData.getValidDepositAmount())
                 .build();
 

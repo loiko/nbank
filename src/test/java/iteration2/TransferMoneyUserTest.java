@@ -229,7 +229,7 @@ public class TransferMoneyUserTest extends BaseTest {
 
         TransferRequestModel transferRequest = TransferRequestModel.builder()
                 .senderAccountId(userAccount.getId())
-                .receiverAccountId(3000)
+                .receiverAccountId(RandomData.getNonExistingAccountId())
                 .amount(depositRequest.getBalance())
                 .build();
 

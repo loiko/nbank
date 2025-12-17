@@ -52,4 +52,8 @@ public class RandomData {
 
         return name + " " + surname;
     }
+
+    public static long getNonExistingAccountId() {
+        return ThreadLocalRandom.current().nextLong(30_000, 100_000);
+    }
 }
