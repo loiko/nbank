@@ -59,6 +59,12 @@ public enum Endpoint {
             "/accounts/{accountId}/transactions",
             BaseModel.class,
             TransactionsResponseModel.class
+    ),
+
+    DELETE_USER(
+            "/admin/users/{id}",
+            BaseModel.class,
+            DeleteUserResponseModel.class
     );
 
     private final String url;
