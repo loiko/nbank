@@ -15,6 +15,7 @@ import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import api.utilities.BaseTest;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public class CreateUserTest extends BaseTest {
@@ -25,8 +26,8 @@ public class CreateUserTest extends BaseTest {
 
         CreateUserResponseModel createUserResponse = new ValidatedCrudRequester<CreateUserResponseModel>
                 (RequestSpecs.adminSpec(),
-                Endpoint.ADMIN_USER,
-                ResponseSpecs.entityWasCreated())
+                        Endpoint.ADMIN_USER,
+                        ResponseSpecs.entityWasCreated())
                 .post(userRequest);
 
         ModelAssertions.assertThatModels(userRequest, createUserResponse).match();
@@ -34,13 +35,14 @@ public class CreateUserTest extends BaseTest {
 
     public static Stream<Arguments> userInvalidData() {
         return Stream.of(
-                Arguments.of(" ", "Password33$", "USER", "username", "Username must be between 3 and 15 characters"),
-                Arguments.of("dfgdfg", "h", "USER", "password", "Password must contain at least one digit, one lower case, one upper case, one special character, no spaces, and be at least 8 characters long"));
+                Arguments.of(" ", "Password33$", "USER", "username", List.of("Username cannot be blank", "Username must contain only letters, digits, dashes, underscores, and dots", "Username must be between 3 and 15 characters")),
+                Arguments.of("dfgdfg", "h", "USER", "password", List.of("Password must contain at least one digit, one lower case, one upper case, one special character, no spaces, and be at least 8 characters long"))
+        );
     }
 
     @MethodSource("userInvalidData")
     @ParameterizedTest
-    public void adminCannotCreateUserWithInvalidDataTest(String username, String password, String role, String errorKey, String errorValue) {
+    public void adminCannotCreateUserWithInvalidDataTest(String username, String password, String role, String errorKey, List<String> errorValues) {
         CreateUserRequestModel userRequest = CreateUserRequestModel.builder()
                 .username(username)
                 .password(password)
@@ -50,7 +52,7 @@ public class CreateUserTest extends BaseTest {
         new CrudRequester(
                 RequestSpecs.adminSpec(),
                 Endpoint.ADMIN_USER,
-                ResponseSpecs.requestReturnsBadRequest(errorKey, errorValue))
+                ResponseSpecs.requestReturnsBadRequest(errorKey, errorValues))
                 .post(userRequest);
     }
 }

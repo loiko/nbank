@@ -4,6 +4,7 @@ import api.generators.RandomModelGenerator;
 import api.models.CreateUserRequestModel;
 import api.models.CreateUserResponseModel;
 import api.requests.skeleton.Endpoint;
+import api.requests.skeleton.requesters.CrudRequester;
 import api.requests.skeleton.requesters.ValidatedCrudRequester;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
@@ -28,5 +29,21 @@ public class AdminSteps {
                 RequestSpecs.adminSpec(),
                 Endpoint.ADMIN_USER,
                 ResponseSpecs.requestReturnsOk()).getAll(CreateUserResponseModel[].class);
+    }
+
+    public static void deleteUser(long id) {
+        new CrudRequester(
+                RequestSpecs.adminSpec(),
+                Endpoint.DELETE_USER,
+                ResponseSpecs.requestReturnsOk()
+        ).delete(id);
+    }
+
+    public static void deleteAllUsers() {
+        List<CreateUserResponseModel> users = getAllUsers();
+
+        for (CreateUserResponseModel user : users) {
+            deleteUser(user.getId());
+        }
     }
 }

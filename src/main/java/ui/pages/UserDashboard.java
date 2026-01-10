@@ -4,6 +4,8 @@ package ui.pages;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import common.storage.SessionStorage;
+import common.utils.RetryUtils;
 import lombok.Getter;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -22,6 +24,12 @@ public class UserDashboard extends BasePage<UserDashboard> {
 
     public UserDashboard createNewAccount() {
         createNewAccountButton.click();
+        RetryUtils.retry(
+                () -> SessionStorage.getSteps().getAllAccounts(),
+                accounts -> accounts.size() > 0,
+                3,
+                3000
+        );
         return this;
     }
 

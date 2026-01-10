@@ -58,7 +58,6 @@ public abstract class BasePage<T extends BasePage> {
         authAsUser(createUserRequest.getUsername(), createUserRequest.getPassword());
     }
 
-    // ElementCollection -> List<BaseElement>
     protected <T extends BaseElement> List<T> generatePageElements(ElementsCollection elementsCollection, Function<SelenideElement, T> constructor) {
         return elementsCollection.stream().map(constructor).toList();
     }
