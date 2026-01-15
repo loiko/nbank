@@ -1,6 +1,9 @@
 package ui.iteration1;
 
+import api.dao.AccountDao;
+import api.dao.comparison.DaoAndModelAssertions;
 import api.models.AccountResponseModel;
+import api.requests.steps.DataBaseSteps;
 import common.annotations.UserSession;
 import common.storage.SessionStorage;
 import org.junit.jupiter.api.Test;
@@ -26,5 +29,7 @@ public class CreateAccountTest extends BaseUiTest {
 
         assertThat(createdAccounts.get(0).getBalance()).isZero();
 
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(createdAccounts.get(0).getAccountNumber());
+        DaoAndModelAssertions.assertThat(createdAccounts.get(0), accountDao).match();
     }
 }

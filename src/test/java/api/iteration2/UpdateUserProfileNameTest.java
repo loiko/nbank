@@ -1,10 +1,12 @@
 package api.iteration2;
 
+import api.dao.UserDao;
 import api.generators.RandomModelGenerator;
 import api.models.CreateUserRequestModel;
 import api.models.RetrieveUserProfileResponseModel;
 import api.models.UpdateUserNameRequestModel;
 import api.models.UpdateUserNameResponseModel;
+import api.requests.steps.DataBaseSteps;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,6 +43,9 @@ public class UpdateUserProfileNameTest extends BaseTest {
         softly.assertThat(setUserNameRequest.getName())
                 .isEqualTo(setUserNameResponse.getCustomer().getName())
                 .isEqualTo(userProfileAfterSetName.getName());
+
+        UserDao userDao = DataBaseSteps.getUserByUsername(user.getUsername());
+        softly.assertThat(setUserNameRequest.getName()).isEqualTo(userDao.getName());
     }
 
     @Test
@@ -59,9 +64,11 @@ public class UpdateUserProfileNameTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk())
                 .put(updateUserNameRequest);
         RetrieveUserProfileResponseModel userProfileAfterUpdateName = UserSteps.getProfile(user);
+        UserDao userDao = DataBaseSteps.getUserByUsername(user.getUsername());
 
         softly.assertThat(updateUserNameResponse.getCustomer().getName()).isEqualTo(userProfileAfterUpdateName.getName());
         softly.assertThat(userProfileAfterUpdateName.getName()).isNotEqualTo(userProfileAfterSetName.getName());
+        softly.assertThat(userProfileAfterUpdateName.getName()).isEqualTo(userDao.getName());
     }
 
     public static Stream<Arguments> invalidUserName() {
@@ -102,5 +109,8 @@ public class UpdateUserProfileNameTest extends BaseTest {
 
         RetrieveUserProfileResponseModel userProfileAfterUpdateName = UserSteps.getProfile(user);
         softly.assertThat(userProfileAfterUpdateName.getName()).isNull();
+
+        UserDao userDao = DataBaseSteps.getUserByUsername(user.getUsername());
+        softly.assertThat(userDao.getName()).isNull();
     }
 }

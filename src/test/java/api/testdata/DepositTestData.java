@@ -10,4 +10,6 @@ public final class DepositTestData {
     public static final double ABOVE_MAX_AMOUNT = MAX_VALID_DEPOSIT_AMOUNT + 0.01;
     public static final String ERROR_MIN_AMOUNT = "Deposit amount must be at least 0.01";
     public static final String ERROR_MAX_AMOUNT = "Deposit amount cannot exceed 5000";
+    public static final String ERROR_MAX_AMOUNT_LIMIT = "Deposit amount exceeds the 5000 limit";
+    public static final String ERROR_COMMON = "Invalid account or amount";
 }

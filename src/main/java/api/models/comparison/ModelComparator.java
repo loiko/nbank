@@ -17,12 +17,37 @@ public class ModelComparator {
             Object value1 = getFieldValue(request, requestField);
             Object value2 = getFieldValue(response, responseField);
 
-            if (!Objects.equals(String.valueOf(value1), String.valueOf(value2))) {
+            if (!areValuesEqual(value1, value2)) {
                 mismatches.add(new Mismatch(requestField + " -> " + responseField, value1, value2));
             }
         }
 
         return new ComparisonResult(mismatches);
+    }
+
+    private static boolean areValuesEqual(Object expected, Object actual) {
+        if (expected == null && actual == null) return true;
+        if (expected == null || actual == null) return false;
+
+        String expectedStr = String.valueOf(expected);
+        String actualStr = String.valueOf(actual);
+
+        // Автоматическое обрезание наносекунд для timestamp
+        if (isTimestamp(expectedStr) && isTimestamp(actualStr)) {
+            return truncateToMillis(expectedStr).equals(truncateToMillis(actualStr));
+        }
+
+        return Objects.equals(expectedStr, actualStr);
+    }
+
+    private static boolean isTimestamp(String str) {
+        // Проверяет формат: 2026-01-14T19:31:16.509971212
+        return str != null && str.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d+$");
+    }
+
+    private static String truncateToMillis(String timestamp) {
+        // Обрезает до миллисекунд (3 цифры после точки): 2026-01-14T19:31:16.509
+        return timestamp.replaceAll("(\\.\\d{3})\\d*", "$1");
     }
 
     private static Object getFieldValue(Object obj, String fieldName) {

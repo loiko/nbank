@@ -1,7 +1,12 @@
 package ui.iteration2;
 
+import api.dao.AccountDao;
+import api.dao.comparison.DaoAndModelAssertions;
 import api.generators.RandomData;
 import api.models.AccountResponseModel;
+import api.requests.steps.DataBaseSteps;
+import api.requests.steps.UserSteps;
+import api.testdata.AccountTestData;
 import common.annotations.UserSession;
 import common.storage.SessionStorage;
 import org.junit.jupiter.api.Test;
@@ -39,6 +44,11 @@ public class DepositMoneyUserTest extends BaseUiTest {
                 .getSteps()
                 .getAccount(userAccount.getId()).getBalance())
                 .isEqualTo(depositAmount);
+
+
+        AccountResponseModel accountAfterDeposit = UserSteps.getAccount(SessionStorage.getUser(), userAccount.getId());
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(userAccount.getAccountNumber());
+        DaoAndModelAssertions.assertThat(accountAfterDeposit, accountDao).match();
     }
 
     @Test
@@ -60,6 +70,10 @@ public class DepositMoneyUserTest extends BaseUiTest {
                 .getSteps()
                 .getAccount(userAccount.getId()).getBalance())
                 .isZero();
+
+        AccountResponseModel accountAfterDeposit = UserSteps.getAccount(SessionStorage.getUser(), userAccount.getId());
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
+        softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
     }
 
     public static Stream<Arguments> invalidDepositAmount() {
@@ -89,6 +103,10 @@ public class DepositMoneyUserTest extends BaseUiTest {
                 .getSteps()
                 .getAccount(userAccount.getId()).getBalance())
                 .isZero();
+
+        AccountResponseModel accountAfterDeposit = UserSteps.getAccount(SessionStorage.getUser(), userAccount.getId());
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
+        softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
     }
 }
 

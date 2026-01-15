@@ -4,10 +4,13 @@ import api.generators.RandomData;
 import api.models.AccountResponseModel;
 import api.testdata.DepositTestData;
 import api.testdata.TransferTestData;
+import common.annotations.APIVersion;
 import common.annotations.UserSession;
+import common.extensions.APIVersionExtension;
 import common.storage.SessionStorage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,6 +25,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.within;
 
+@ExtendWith(APIVersionExtension.class)
+@APIVersion("with_validation_fix")
 public class TransferMoneyUserTest extends BaseUiTest {
 
     @Test

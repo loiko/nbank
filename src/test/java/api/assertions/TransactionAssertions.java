@@ -7,7 +7,7 @@ import org.assertj.core.api.AbstractAssert;
 public class TransactionAssertions extends AbstractAssert<TransactionAssertions, TransactionsModel> {
 
     private static final String TIMESTAMP_REGEX =
-            "^[A-Za-z]{3} [A-Za-z]{3} \\d{2} \\d{2}:\\d{2}:\\d{2} UTC \\d{4}$";
+            "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?$";
 
     private TransactionAssertions(TransactionsModel actual) {
         super(actual, TransactionAssertions.class);
