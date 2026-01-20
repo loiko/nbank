@@ -1,7 +1,9 @@
 package ui.iteration2;
 
+import api.dao.UserDao;
 import api.generators.RandomData;
 import api.models.RetrieveUserProfileResponseModel;
+import api.requests.steps.DataBaseSteps;
 import com.codeborne.selenide.Condition;
 import common.annotations.UserSession;
 import common.storage.SessionStorage;
@@ -39,6 +41,9 @@ public class UpdateUserProfileNameTest extends BaseUiTest {
 
         RetrieveUserProfileResponseModel userProfile = SessionStorage.getSteps().getProfile();
         assertThat(userProfile.getName()).isEqualTo(newFullName);
+
+        UserDao userDao = DataBaseSteps.getUserByUsername(userProfile.getUsername());
+        softly.assertThat(newFullName).isEqualTo(userDao.getName());
     }
 
     public static Stream<Arguments> invalidUserName() {
@@ -66,5 +71,8 @@ public class UpdateUserProfileNameTest extends BaseUiTest {
 
         RetrieveUserProfileResponseModel userProfile = SessionStorage.getSteps().getProfile();
         assertThat(userProfile.getName()).isNull();
+
+        UserDao userDao = DataBaseSteps.getUserByUsername(userProfile.getUsername());
+        softly.assertThat(userDao.getName()).isNull();
     }
 }

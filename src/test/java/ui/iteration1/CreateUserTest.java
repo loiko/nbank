@@ -1,10 +1,13 @@
 package ui.iteration1;
 
+import api.dao.UserDao;
+import api.dao.comparison.DaoAndModelAssertions;
 import api.requests.steps.AdminSteps;
 import api.generators.RandomModelGenerator;
 import api.models.CreateUserRequestModel;
 import api.models.CreateUserResponseModel;
 import api.models.comparison.ModelAssertions;
+import api.requests.steps.DataBaseSteps;
 import common.annotations.AdminSession;
 import org.junit.jupiter.api.Test;
 import ui.elements.UserBage;
@@ -12,7 +15,6 @@ import ui.utilities.BaseUiTest;
 import ui.pages.AdminPanel;
 import ui.pages.BankAlert;
 
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +37,9 @@ public class CreateUserTest extends BaseUiTest {
                 .findFirst().get();
 
         ModelAssertions.assertThatModels(newUser, createdUser).match();
+
+        UserDao userDao = DataBaseSteps.getUserByUsername(newUser.getUsername());
+        DaoAndModelAssertions.assertThat(createdUser, userDao).match();
     }
 
     @Test
@@ -54,5 +59,6 @@ public class CreateUserTest extends BaseUiTest {
                 .count();
 
         assertThat(notCreatedUser).isZero();
+        assertNull(DataBaseSteps.getUserByUsername(newUser.getUsername()));
     }
 }

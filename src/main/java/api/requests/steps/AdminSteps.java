@@ -9,6 +9,7 @@ import api.requests.skeleton.requesters.ValidatedCrudRequester;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class AdminSteps {
@@ -41,9 +42,12 @@ public class AdminSteps {
 
     public static void deleteAllUsers() {
         List<CreateUserResponseModel> users = getAllUsers();
+        List<String> protectedUsernames = Arrays.asList("admin", "john_doe", "jane_smith", "bob_wilson");
 
         for (CreateUserResponseModel user : users) {
-            deleteUser(user.getId());
+            if (!protectedUsernames.contains(user.getUsername())) {
+                deleteUser(user.getId());
+            }
         }
     }
 }

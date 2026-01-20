@@ -1,6 +1,5 @@
-package api.models;
+package api.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class TransactionsModel extends BaseModel {
+public class TransactionDao {
     private long id;
     private double amount;
     private String type;
     private String timestamp;
-    private int relatedAccountId;
+    private long accountId;
+    private long relatedAccountId;
+    private String creationTime;
 }
+

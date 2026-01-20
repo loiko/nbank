@@ -1,9 +1,13 @@
 package api.iteration2;
 
 import api.assertions.TransactionAssertions;
+import api.dao.AccountDao;
+import api.dao.TransactionDao;
+import api.dao.comparison.DaoAndModelAssertions;
 import api.generators.RandomData;
 import api.models.*;
 import api.models.comparison.ModelAssertions;
+import api.requests.steps.DataBaseSteps;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,14 +71,20 @@ public class DepositMoneyUserTest extends BaseTest {
 
         AccountResponseModel accountAfterDeposit = UserSteps.getAccount(user, account.getId());
         softly.assertThat((amount)).isEqualTo(accountAfterDeposit.getBalance());
+
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
+        DaoAndModelAssertions.assertThat(accountAfterDeposit, accountDao).match();
+
+        TransactionDao transactionDao = DataBaseSteps.getTransactionById(actualTransaction.getId());
+        DaoAndModelAssertions.assertThat(actualTransaction, transactionDao).match();
     }
 
     public static Stream<Arguments> invalidDepositAmounts() {
         return Stream.of(
-                Arguments.of(DepositTestData.BELOW_MIN_AMOUNT, DepositTestData.ERROR_MIN_AMOUNT),
-                Arguments.of(DepositTestData.ABOVE_MAX_AMOUNT, DepositTestData.ERROR_MAX_AMOUNT),
-                Arguments.of(RandomData.getRandomNegativeAmount(), DepositTestData.ERROR_MIN_AMOUNT),
-                Arguments.of(RandomData.getRandomInvalidDepositPositiveAmount(), DepositTestData.ERROR_MAX_AMOUNT)
+                Arguments.of(DepositTestData.BELOW_MIN_AMOUNT, DepositTestData.ERROR_COMMON),
+                Arguments.of(DepositTestData.ABOVE_MAX_AMOUNT, DepositTestData.ERROR_MAX_AMOUNT_LIMIT),
+                Arguments.of(RandomData.getRandomNegativeAmount(), DepositTestData.ERROR_COMMON),
+                Arguments.of(RandomData.getRandomInvalidDepositPositiveAmount(), DepositTestData.ERROR_MAX_AMOUNT_LIMIT)
         );
     }
 
@@ -101,6 +111,12 @@ public class DepositMoneyUserTest extends BaseTest {
 
         TransactionsResponseModel userTransactions = UserSteps.getTransactions(user, account.getId());
         softly.assertThat(userTransactions.getTransactions().isEmpty());
+
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
+        softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
+
+        TransactionDao transactionDao = DataBaseSteps.getTransactionById(account.getId());
+        softly.assertThat(transactionDao).isNull();
     }
 
     @Test
@@ -125,6 +141,12 @@ public class DepositMoneyUserTest extends BaseTest {
 
         TransactionsResponseModel userTransactions = UserSteps.getTransactions(user, account.getId());
         softly.assertThat(userTransactions.getTransactions().isEmpty());
+
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
+        softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
+
+        TransactionDao transactionDao = DataBaseSteps.getTransactionById(account.getId());
+        softly.assertThat(transactionDao).isNull();
     }
 
     @Test
@@ -149,6 +171,12 @@ public class DepositMoneyUserTest extends BaseTest {
 
         TransactionsResponseModel userTransactions = UserSteps.getTransactions(user, account.getId());
         softly.assertThat(userTransactions.getTransactions().isEmpty());
+
+        AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
+        softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
+
+        TransactionDao transactionDao = DataBaseSteps.getTransactionById(account.getId());
+        softly.assertThat(transactionDao).isNull();
     }
 }
 
