@@ -9,5 +9,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface UserSession {
     int value() default 1;
+
     int auth() default 1;
+
+    int[] accounts() default {};
+
+    int[] deposits() default {};
 }

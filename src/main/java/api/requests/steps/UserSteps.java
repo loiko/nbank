@@ -6,6 +6,7 @@ import api.requests.skeleton.requesters.CrudRequester;
 import api.requests.skeleton.requesters.ValidatedCrudRequester;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
+import common.helpers.StepLogger;
 
 import java.util.List;
 
@@ -116,13 +117,12 @@ public class UserSteps {
         return lastResponse;
     }
 
-    public void deposit(long accountId, double amount, int times) {
-        DepositRequestModel request = DepositRequestModel.builder()
-                .id(accountId)
-                .balance(amount)
-                .build();
-
+    public void depositExtension(long accountId, double amount, int times) {
         for (int i = 0; i < times; i++) {
+        DepositRequestModel request = DepositRequestModel.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .build();
             new ValidatedCrudRequester<DepositResponseModel>(
                     RequestSpecs.authAsUser(username, password),
                     Endpoint.DEPOSIT,
@@ -158,5 +158,21 @@ public class UserSteps {
                 RequestSpecs.authAsUser(username, password),
                 Endpoint.GET_ACCOUNTS,
                 ResponseSpecs.requestReturnsOk()).getAll(AccountResponseModel[].class);
+    }
+
+    public TransferResponseWithFraudCheckModel transferWithFraudCheck(Long senderAccountId, Long receiverAccountId, double amount) {
+        return StepLogger.log("User " + username + " transfers " + amount + " to " + receiverAccountId + " with fraud check", () -> {
+            TransferRequestWithFraudCheckModel transferRequest = TransferRequestWithFraudCheckModel.builder()
+                    .senderAccountId(senderAccountId)
+                    .receiverAccountId(receiverAccountId)
+                    .amount(amount)
+                    .description("Test transfer with fraud check")
+                    .build();
+
+            return new ValidatedCrudRequester<TransferResponseWithFraudCheckModel>(
+                    RequestSpecs.authAsUser(username, password),
+                    Endpoint.TRANSFER_WITH_FRAUD_CHECK,
+                    ResponseSpecs.requestReturnsOk()).post(transferRequest);
+        });
     }
 }
