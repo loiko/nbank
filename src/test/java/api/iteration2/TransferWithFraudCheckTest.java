@@ -13,6 +13,7 @@ import common.extensions.APIVersionExtension;
 import common.extensions.FraudCheckWireMockExtension;
 import common.extensions.UserSessionExtension;
 import common.storage.SessionStorage;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
