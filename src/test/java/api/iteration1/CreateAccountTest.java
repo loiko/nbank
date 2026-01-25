@@ -6,13 +6,18 @@ import api.models.AccountResponseModel;
 import api.models.CreateUserRequestModel;
 import api.requests.skeleton.requesters.ValidatedCrudRequester;
 import api.requests.steps.DataBaseSteps;
+import common.annotations.APIVersion;
+import common.extensions.APIVersionExtension;
 import org.junit.jupiter.api.Test;
 import api.requests.skeleton.Endpoint;
 import api.requests.steps.AdminSteps;
 import api.specs.RequestSpecs;
 import api.specs.ResponseSpecs;
 import api.utilities.BaseTest;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(APIVersionExtension.class)
+@APIVersion("with_database_with_fix")
 public class CreateAccountTest extends BaseTest {
 
     @Test

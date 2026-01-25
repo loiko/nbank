@@ -120,8 +120,8 @@ public class UserSteps {
     public void depositExtension(long accountId, double amount, int times) {
         for (int i = 0; i < times; i++) {
         DepositRequestModel request = DepositRequestModel.builder()
-                .accountId(accountId)
-                .amount(amount)
+                .id(accountId)
+                .balance(amount)
                 .build();
             new ValidatedCrudRequester<DepositResponseModel>(
                     RequestSpecs.authAsUser(username, password),

@@ -15,6 +15,7 @@ import common.extensions.UserSessionExtension;
 import common.storage.SessionStorage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 @ExtendWith({FraudCheckWireMockExtension.class, UserSessionExtension.class, APIVersionExtension.class})
 @APIVersion("with_fraud_check")
 public class TransferWithFraudCheckTest extends BaseTest {
