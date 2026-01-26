@@ -7,8 +7,11 @@ import api.models.RetrieveUserProfileResponseModel;
 import api.models.UpdateUserNameRequestModel;
 import api.models.UpdateUserNameResponseModel;
 import api.requests.steps.DataBaseSteps;
+import common.annotations.APIVersion;
+import common.extensions.APIVersionExtension;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,6 +26,8 @@ import api.utilities.BaseTest;
 
 import java.util.stream.Stream;
 
+@ExtendWith(APIVersionExtension.class)
+@APIVersion("with_database_with_fix")
 public class UpdateUserProfileNameTest extends BaseTest {
 
     @Test

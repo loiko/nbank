@@ -8,8 +8,11 @@ import api.models.CreateUserRequestModel;
 import api.models.CreateUserResponseModel;
 import api.models.comparison.ModelAssertions;
 import api.requests.steps.DataBaseSteps;
+import common.annotations.APIVersion;
 import common.annotations.AdminSession;
+import common.extensions.APIVersionExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import ui.elements.UserBage;
 import ui.utilities.BaseUiTest;
 import ui.pages.AdminPanel;
@@ -18,6 +21,8 @@ import ui.pages.BankAlert;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(APIVersionExtension.class)
+@APIVersion("with_database_with_fix")
 public class CreateUserTest extends BaseUiTest {
     @Test
     @AdminSession

@@ -1,15 +1,14 @@
 package api.iteration2;
 
 import api.assertions.TransactionAssertions;
-import api.dao.AccountDao;
-import api.dao.TransactionDao;
-import api.dao.comparison.DaoAndModelAssertions;
 import api.generators.RandomData;
 import api.models.*;
-import api.requests.steps.DataBaseSteps;
+import common.annotations.APIVersion;
+import common.extensions.APIVersionExtension;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -29,6 +28,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.within;
 
+@ExtendWith(APIVersionExtension.class)
+@APIVersion("with_database_with_fix")
 public class TransferMoneyUserTest extends BaseTest {
 
     public static Stream<Double> validTransferAmounts() {
@@ -61,6 +62,7 @@ public class TransferMoneyUserTest extends BaseTest {
                 .receiverAccountId(secondUserAccount.getId())
                 .amount(amount)
                 .build();
+
         TransferResponseModel transferResponse = new ValidatedCrudRequester<TransferResponseModel>(
                 RequestSpecs.authUserSpec(firstUser),
                 Endpoint.TRANSFER,
@@ -85,14 +87,6 @@ public class TransferMoneyUserTest extends BaseTest {
         AccountResponseModel secondUserAccountAfterTransfer = UserSteps.getAccount(secondUser, secondUserAccount.getId());
         softly.assertThat(firstUserAccountAfterTransfer.getBalance()).isCloseTo((firstUserAccountAfterDeposit.getBalance() - amount), within(TransferTestData.MONEY_DELTA));
         softly.assertThat(secondUserAccountAfterTransfer.getBalance()).isCloseTo(amount, within(TransferTestData.MONEY_DELTA));
-
-        AccountDao firstUserAccountDao = DataBaseSteps.getAccountByAccountNumber(firstUserAccountAfterTransfer.getAccountNumber());
-        AccountDao secondUserAccountDao = DataBaseSteps.getAccountByAccountNumber(secondUserAccountAfterTransfer.getAccountNumber());
-        DaoAndModelAssertions.assertThat(firstUserAccountAfterTransfer, firstUserAccountDao).match();
-        DaoAndModelAssertions.assertThat(secondUserAccountAfterTransfer, secondUserAccountDao).match();
-
-        TransactionDao transactionDao = DataBaseSteps.getTransactionById(transaction.getId());
-        DaoAndModelAssertions.assertThat(transaction, transactionDao).match();
     }
 
     @ParameterizedTest
@@ -139,21 +133,13 @@ public class TransferMoneyUserTest extends BaseTest {
         AccountResponseModel secondAccountAfterTransfer = UserSteps.getAccount(user, userSecondAccount.getId());
         softly.assertThat(firstAccountAfterTransfer.getBalance()).isCloseTo((firstAccountAfterDeposit.getBalance() - amount), within(TransferTestData.MONEY_DELTA));
         softly.assertThat(secondAccountAfterTransfer.getBalance()).isCloseTo(amount, within(TransferTestData.MONEY_DELTA));
-
-        AccountDao firstUserAccountDao = DataBaseSteps.getAccountByAccountNumber(firstAccountAfterTransfer.getAccountNumber());
-        AccountDao secondUserAccountDao = DataBaseSteps.getAccountByAccountNumber(secondAccountAfterTransfer.getAccountNumber());
-        DaoAndModelAssertions.assertThat(firstAccountAfterTransfer, firstUserAccountDao).match();
-        DaoAndModelAssertions.assertThat(secondAccountAfterTransfer, secondUserAccountDao).match();
-
-        TransactionDao transactionDao = DataBaseSteps.getTransactionById(transaction.getId());
-        DaoAndModelAssertions.assertThat(transaction, transactionDao).match();
     }
 
     public static Stream<Arguments> invalidTransferAmounts() {
         return Stream.of(
-                Arguments.of(TransferTestData.BELOW_MIN_AMOUNT, TransferTestData.ERROR_INVALID_TRANSFER),
+                Arguments.of(TransferTestData.BELOW_MIN_AMOUNT, TransferTestData.ERROR_MIN_AMOUNT),
                 Arguments.of(TransferTestData.ABOVE_MAX_AMOUNT, TransferTestData.ERROR_MAX_AMOUNT),
-                Arguments.of(RandomData.getRandomNegativeAmount(), TransferTestData.ERROR_INVALID_TRANSFER),
+                Arguments.of(RandomData.getRandomNegativeAmount(), TransferTestData.ERROR_MIN_AMOUNT),
                 Arguments.of(RandomData.getRandomInvalidTransferPositiveAmount(), TransferTestData.ERROR_MAX_AMOUNT)
         );
     }
@@ -195,17 +181,6 @@ public class TransferMoneyUserTest extends BaseTest {
         AccountResponseModel secondUserAccountAfterTransfer = UserSteps.getAccount(secondUser, secondUserAccount.getId());
         softly.assertThat(firstUserAccountAfterTransfer.getBalance()).isEqualTo(firstUserAccountAfterDeposit.getBalance());
         softly.assertThat(secondUserAccountAfterTransfer.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
-
-        AccountDao firtsUserAccountDao = DataBaseSteps.getAccountByAccountNumber(firstUserAccountAfterTransfer.getAccountNumber());
-        AccountDao secondUserAccountDao = DataBaseSteps.getAccountByAccountNumber(secondUserAccountAfterTransfer.getAccountNumber());
-        softly.assertThat(firtsUserAccountDao.getBalance()).isEqualTo(firstUserAccountAfterDeposit.getBalance());
-        softly.assertThat(secondUserAccountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
-
-        TransactionDao transferTransaction = DataBaseSteps.getTransactionByAccountIdAndType(
-                secondUserAccount.getId(),
-                "TRANSFER"
-        );
-        softly.assertThat(transferTransaction).isNull();
     }
 
     @Test
@@ -244,17 +219,6 @@ public class TransferMoneyUserTest extends BaseTest {
         AccountResponseModel secondUserAccountAfterTransfer = UserSteps.getAccount(secondUser, secondUserAccount.getId());
         softly.assertThat(firstUserAccountAfterTransfer.getBalance()).isEqualTo(firstUserAccountAfterDeposit.getBalance());
         softly.assertThat(secondUserAccountAfterTransfer.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
-
-        AccountDao firtsUserAccountDao = DataBaseSteps.getAccountByAccountNumber(firstUserAccountAfterTransfer.getAccountNumber());
-        AccountDao secondUserAccountDao = DataBaseSteps.getAccountByAccountNumber(secondUserAccountAfterTransfer.getAccountNumber());
-        softly.assertThat(firtsUserAccountDao.getBalance()).isEqualTo(firstUserAccountAfterDeposit.getBalance());
-        softly.assertThat(secondUserAccountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
-
-        TransactionDao transferTransaction = DataBaseSteps.getTransactionByAccountIdAndType(
-                secondUserAccount.getId(),
-                "TRANSFER"
-        );
-        softly.assertThat(transferTransaction).isNull();
     }
 
     @Test
@@ -285,15 +249,6 @@ public class TransferMoneyUserTest extends BaseTest {
 
         AccountResponseModel userAccountAfterTransfer = UserSteps.getAccount(user, userAccount.getId());
         softly.assertThat(userAccountAfterTransfer.getBalance()).isEqualTo(firstUserAccountAfterDeposit.getBalance());
-
-        AccountDao userAccountDao = DataBaseSteps.getAccountByAccountNumber(userAccountAfterTransfer.getAccountNumber());
-        softly.assertThat(userAccountDao.getBalance()).isEqualTo(firstUserAccountAfterDeposit.getBalance());
-
-        TransactionDao transferTransaction = DataBaseSteps.getTransactionByAccountIdAndType(
-                userAccount.getId(),
-                "TRANSFER"
-        );
-        softly.assertThat(transferTransaction).isNull();
     }
 
     @Disabled

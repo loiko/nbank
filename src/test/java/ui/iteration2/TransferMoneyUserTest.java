@@ -38,7 +38,7 @@ public class TransferMoneyUserTest extends BaseUiTest {
         AccountResponseModel firstAccount = SessionStorage.getSteps().createAccount();
         AccountResponseModel secondAccount = SessionStorage.getSteps().createAccount();
 
-        SessionStorage.getSteps().deposit(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
+        SessionStorage.getSteps().depositExtension(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
 
         double firstAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(firstAccount.getId()).getBalance();
 
@@ -74,7 +74,7 @@ public class TransferMoneyUserTest extends BaseUiTest {
         AccountResponseModel firstAccount = SessionStorage.getSteps().createAccount();
         AccountResponseModel secondAccount = SessionStorage.getSteps().createAccount();
 
-        SessionStorage.getSteps().deposit(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
+        SessionStorage.getSteps().depositExtension(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
 
         double firstAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(firstAccount.getId()).getBalance();
         double secondAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(secondAccount.getId()).getBalance();
@@ -102,14 +102,14 @@ public class TransferMoneyUserTest extends BaseUiTest {
     }
 
     @Test
-    @UserSession
+    @UserSession()
     public void userCannotTransferToNonExistentAccountTest() {
         double transferAmount = RandomData.getValidDepositAmount();
         String transferAmountUi = Utils.formatMoney(transferAmount);
 
         AccountResponseModel userAccount = SessionStorage.getSteps().createAccount();
 
-        SessionStorage.getSteps().deposit(userAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
+        SessionStorage.getSteps().depositExtension(userAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
 
         double userAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(userAccount.getId()).getBalance();
 
@@ -149,7 +149,7 @@ public class TransferMoneyUserTest extends BaseUiTest {
         AccountResponseModel firstAccount = SessionStorage.getSteps().createAccount();
         AccountResponseModel secondAccount = SessionStorage.getSteps().createAccount();
 
-        SessionStorage.getSteps().deposit(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, timesDeposit);
+        SessionStorage.getSteps().depositExtension(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, timesDeposit);
 
         double firstAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(firstAccount.getId()).getBalance();
         double secondAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(secondAccount.getId()).getBalance();
@@ -186,7 +186,7 @@ public class TransferMoneyUserTest extends BaseUiTest {
         AccountResponseModel firstAccount = SessionStorage.getSteps().createAccount();
         AccountResponseModel secondAccount = SessionStorage.getSteps().createAccount();
 
-        SessionStorage.getSteps().deposit(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
+        SessionStorage.getSteps().depositExtension(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
 
         double firstAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(firstAccount.getId()).getBalance();
         double secondAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(secondAccount.getId()).getBalance();
@@ -223,7 +223,7 @@ public class TransferMoneyUserTest extends BaseUiTest {
         AccountResponseModel firstAccount = SessionStorage.getSteps().createAccount();
         AccountResponseModel secondAccount = SessionStorage.getSteps().createAccount();
 
-        SessionStorage.getSteps().deposit(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
+        SessionStorage.getSteps().depositExtension(firstAccount.getId(), DepositTestData.MAX_VALID_DEPOSIT_AMOUNT, 2);
 
         double firstAccountBalanceBeforeTransfer = SessionStorage.getSteps().getAccount(firstAccount.getId()).getBalance();
 

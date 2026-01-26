@@ -6,7 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-//@ExtendWith(TimingExtension.class)
+@ExtendWith(TimingExtension.class)
 public class BaseTest {
     protected SoftAssertions softly;
 

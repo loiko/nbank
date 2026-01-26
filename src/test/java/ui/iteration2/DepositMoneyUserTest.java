@@ -7,9 +7,12 @@ import api.models.AccountResponseModel;
 import api.requests.steps.DataBaseSteps;
 import api.requests.steps.UserSteps;
 import api.testdata.AccountTestData;
+import common.annotations.APIVersion;
 import common.annotations.UserSession;
+import common.extensions.APIVersionExtension;
 import common.storage.SessionStorage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,6 +25,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(APIVersionExtension.class)
+@APIVersion("with_database_with_fix")
 public class DepositMoneyUserTest extends BaseUiTest {
 
     @Test
