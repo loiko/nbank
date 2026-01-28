@@ -39,3 +39,6 @@ build/
 .DS_Store
 /NBank-awesome-tests-database/
 /DB_TESTS_README.md
+
+# Docker Hub token
+.env

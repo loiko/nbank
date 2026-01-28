@@ -47,15 +47,8 @@ public class UserSessionExtension implements BeforeEachCallback {
 
             SessionStorage.addUsers(users);
 
-            if (isUiTest(extensionContext)) {
-                int authAsUser = annotation.auth();
-                BasePage.authAsUser(SessionStorage.getUser(authAsUser));
-            }
+            int authAsUser = annotation.auth();
+            BasePage.authAsUser(SessionStorage.getUser(authAsUser));
         }
-    }
-
-    private boolean isUiTest(ExtensionContext extensionContext) {
-        Class<?> testClass = extensionContext.getRequiredTestClass();
-        return testClass.getPackage().getName().contains(".ui.");
     }
 }
