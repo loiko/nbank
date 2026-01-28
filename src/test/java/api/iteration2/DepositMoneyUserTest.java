@@ -120,7 +120,7 @@ public class DepositMoneyUserTest extends BaseTest {
         AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
         softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
 
-        TransactionDao transactionDao = DataBaseSteps.getTransactionById(account.getId());
+        TransactionDao transactionDao = DataBaseSteps.getTransactionByAccountId(account.getId());
         softly.assertThat(transactionDao).isNull();
     }
 
@@ -150,7 +150,7 @@ public class DepositMoneyUserTest extends BaseTest {
         AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
         softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
 
-        TransactionDao transactionDao = DataBaseSteps.getTransactionById(account.getId());
+        TransactionDao transactionDao = DataBaseSteps.getTransactionByAccountId(account.getId());
         softly.assertThat(transactionDao).isNull();
     }
 
@@ -180,7 +180,7 @@ public class DepositMoneyUserTest extends BaseTest {
         AccountDao accountDao = DataBaseSteps.getAccountByAccountNumber(accountAfterDeposit.getAccountNumber());
         softly.assertThat(accountDao.getBalance()).isEqualTo(AccountTestData.INITIAL_ACCOUNT_BALANCE);
 
-        TransactionDao transactionDao = DataBaseSteps.getTransactionById(account.getId());
+        TransactionDao transactionDao = DataBaseSteps.getTransactionByAccountId(account.getId());
         softly.assertThat(transactionDao).isNull();
     }
 }

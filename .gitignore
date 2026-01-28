@@ -42,3 +42,5 @@ build/
 
 # Docker Hub token
 .env
+
+/test-output/
