@@ -63,15 +63,30 @@ jobs:
           echo ""
           echo "=== Check if browser container started ==="
           docker ps -a | grep chrome || echo "No chrome container found"
-      
+
+      - name: Test network connectivity
+        run: |
+          echo "=== Check if frontend is accessible ==="
+          curl -I http://localhost:80 || echo "Frontend not accessible from host"
+
+          echo "=== Check frontend container ==="
+          docker logs docker_compose-frontend-1 --tail 20
+
+          echo "=== Test from inside Selenoid network ==="
+          docker run --rm --network nbank-network alpine/curl:latest curl -I http://frontend || echo "Frontend not accessible from Docker network"
+
+          echo "=== Check what page browser sees ==="
+          BROWSER_CONTAINER=$(docker ps -q -f ancestor=selenoid/vnc:chrome_91.0 | head -1)
+          if [ -n "$BROWSER_CONTAINER" ]; then
+            docker exec $BROWSER_CONTAINER curl -s http://frontend | head -20 || echo "Cannot reach frontend"
+          fi
+
       - name: Run Tests
         run: ./mvnw clean test -q
         env:
           APIBASEURL: http://localhost:4111
-          UIBASEURL: http://frontend
+          UIBASEURL: http://frontend:80
           UIREMOTE: http://localhost:4444/wd/hub/
-#          SELENOID_URL: http://localhost:4444
-#          SELENOID_UI_URL: http://localhost:6567
           DB_URL: jdbc:postgresql://localhost:5433/nbank
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
