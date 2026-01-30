@@ -27,6 +27,23 @@ jobs:
       - name: Set up Services
         run: cd infra/docker_compose && bash restart_docker.sh && cd ../..
 
+      - name: Debug Selenoid
+        run: |
+          echo "=== Selenoid container status ==="
+          docker ps | grep selenoid
+          
+          echo "=== Selenoid logs ==="
+          docker logs $(docker ps -q -f name=selenoid) 2>&1 | tail -50
+          
+          echo "=== Selenoid /status endpoint ==="
+          curl -s http://localhost:4444/status || echo "Selenoid not responding"
+          
+          echo "=== Available browser images ==="
+          docker images | grep selenoid
+          
+          echo "=== browsers.json content ==="
+          cat infra/docker_compose/config/browsers.json
+
       - name: Run Tests
         run: ./mvnw clean test -q
         env:
