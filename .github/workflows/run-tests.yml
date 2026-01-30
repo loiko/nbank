@@ -44,6 +44,26 @@ jobs:
           echo "=== browsers.json content ==="
           cat infra/docker_compose/config/browsers.json
 
+      - name: Test Selenoid manually
+        run: |
+          echo "=== Try to create a session in Selenoid ==="
+          curl -X POST http://localhost:4444/wd/hub/session \
+          -H "Content-Type: application/json" \
+          -d '{
+          "desiredCapabilities": {
+          "browserName": "chrome",
+          "version": "91.0"
+            }
+          }' || echo "Failed to create session"
+    
+          echo ""
+          echo "=== Check Selenoid logs after session attempt ==="
+          docker logs docker_compose-selenoid-1 2>&1 | tail -20
+    
+          echo ""
+          echo "=== Check if browser container started ==="
+          docker ps -a | grep chrome || echo "No chrome container found"
+      
       - name: Run Tests
         run: ./mvnw clean test -q
         env:
