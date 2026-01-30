@@ -69,8 +69,9 @@ jobs:
         env:
           APIBASEURL: http://localhost:4111
           UIBASEURL: http://frontend
-          SELENOID_URL: http://localhost:4444
-          SELENOID_UI_URL: http://localhost:6567
+          UIREMOTE: http://localhost:4444/wd/hub/
+#          SELENOID_URL: http://localhost:4444
+#          SELENOID_UI_URL: http://localhost:6567
           DB_URL: jdbc:postgresql://localhost:5433/nbank
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
