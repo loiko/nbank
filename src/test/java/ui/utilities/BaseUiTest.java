@@ -20,14 +20,6 @@ public class BaseUiTest extends BaseTest {
 
     @BeforeAll
     public static void setupSelenoid() {
-
-        System.out.println("=== Environment variables ===");
-        System.out.println("UIBASEURL env: " + System.getenv("UIBASEURL"));
-        System.out.println("UIREMOTE env: " + System.getenv("UIREMOTE"));
-        System.out.println("=== Config.getProperty results ===");
-        System.out.println("uiBaseUrl: " + Config.getProperty("uiBaseUrl"));
-        System.out.println("uiRemote: " + Config.getProperty("uiRemote"));
-
         Configuration.remote = Config.getProperty("uiRemote");
         Configuration.baseUrl = Config.getProperty("uiBaseUrl");
         Configuration.browser = Config.getProperty("browser");
@@ -37,15 +29,6 @@ public class BaseUiTest extends BaseTest {
                 Map.of("enableVNC", true, "enableLog", true)
         );
     }
-//        Configuration.remote = Config.getProperty("uiRemote");
-//        Configuration.baseUrl = Config.getProperty("uiBaseUrl");
-//        Configuration.browser = Config.getProperty("browser");
-//        Configuration.browserSize = Config.getProperty("browserSize");
-//        Configuration.headless = true;
-//        Configuration.browserCapabilities.setCapability("selenoid:options",
-//                Map.of("enableVNC", true, "enableLog", true)
-//        );
-//    }
 
     @AfterEach
     void tearDown() {
