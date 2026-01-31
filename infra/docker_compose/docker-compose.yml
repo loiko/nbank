@@ -36,8 +36,8 @@ services:
 
   frontend:
     image: nobugsme/nbank-ui:latest
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     depends_on:
       - backend
     networks:
