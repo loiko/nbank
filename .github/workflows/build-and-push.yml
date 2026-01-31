@@ -43,5 +43,5 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          chmod +x push_docker.sh
-          ./push_docker.sh ${{ steps.commit.outputs.SHORT_SHA }}
+          chmod +x push-tests.sh
+          ./push-tests.sh ${{ steps.commit.outputs.SHORT_SHA }}
