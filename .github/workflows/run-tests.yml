@@ -61,11 +61,18 @@ jobs:
           echo "=== Delete session ==="
           curl -X DELETE "http://localhost:4444/wd/hub/session/$SESSION_ID"
 
+      - name: Get Docker gateway IP
+        run: |
+          GATEWAY_IP=$(docker network inspect nbank-network | jq -r '.[0].IPAM.Config[0].Gateway')
+          echo "Gateway IP: $GATEWAY_IP"
+          echo "GATEWAY_IP=$GATEWAY_IP" >> $GITHUB_ENV
+          
+
       - name: Run Tests
         run: ./mvnw clean test -q
         env:
           APIBASEURL: http://localhost:4111
-          UIBASEURL: http://host.docker.internal
+          UIBASEURL: http://${{ env.GATEWAY_IP }}
           UIREMOTE: http://localhost:4444/wd/hub/
           DB_URL: jdbc:postgresql://localhost:5433/nbank
           DB_USERNAME: postgres
