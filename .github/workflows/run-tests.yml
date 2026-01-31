@@ -27,41 +27,6 @@ jobs:
       - name: Set up Services
         run: cd infra/docker_compose && bash restart_docker.sh && cd ../..
 
-      - name: Debug browser view
-        run: |
-          echo "=== Start a test browser session ==="
-          SESSION_RESPONSE=$(curl -X POST http://localhost:4444/wd/hub/session \
-            -H "Content-Type: application/json" \
-            -d '{
-              "desiredCapabilities": {
-                "browserName": "chrome",
-                "version": "91.0"
-              }
-            }')
-
-          echo "Session response: $SESSION_RESPONSE"
-
-          SESSION_ID=$(echo $SESSION_RESPONSE | jq -r '.sessionId')
-          echo "Session ID: $SESSION_ID"
-
-          echo "=== Navigate to frontend ==="
-          curl -X POST "http://localhost:4444/wd/hub/session/$SESSION_ID/url" \
-            -H "Content-Type: application/json" \
-            -d '{"url": "http://frontend"}'
-
-          sleep 3
-
-          echo "=== Get page source ==="
-          PAGE_SOURCE=$(curl -s "http://localhost:4444/wd/hub/session/$SESSION_ID/source" | jq -r '.value')
-          echo "$PAGE_SOURCE" | head -50
-
-          echo "=== Get current URL ==="
-          curl -s "http://localhost:4444/wd/hub/session/$SESSION_ID/url" | jq .
-
-          echo "=== Delete session ==="
-          curl -X DELETE "http://localhost:4444/wd/hub/session/$SESSION_ID"
-
-
       - name: Run Tests
         run: ./mvnw clean test -q
         env:
