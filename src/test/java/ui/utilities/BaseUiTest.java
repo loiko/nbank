@@ -20,22 +20,11 @@ public class BaseUiTest extends BaseTest {
 
     @BeforeAll
     public static void setupSelenoid() {
-        System.out.println("=== Environment Check ===");
-        System.out.println("UIBASEURL env: " + System.getenv("UIBASEURL"));
-        System.out.println("UIREMOTE env: " + System.getenv("UIREMOTE"));
-        System.out.println("uiBaseUrl from Config: " + Config.getProperty("uiBaseUrl"));
-        System.out.println("uiRemote from Config: " + Config.getProperty("uiRemote"));
-
         Configuration.remote = Config.getProperty("uiRemote");
         Configuration.baseUrl = Config.getProperty("uiBaseUrl");
         Configuration.browser = Config.getProperty("browser");
         Configuration.browserSize = Config.getProperty("browserSize");
         Configuration.headless = true;
-
-        System.out.println("=== Final Configuration ===");
-        System.out.println("Configuration.remote: " + Configuration.remote);
-        System.out.println("Configuration.baseUrl: " + Configuration.baseUrl);
-
         Configuration.browserCapabilities.setCapability("selenoid:options",
                 Map.of("enableVNC", true, "enableLog", true)
         );

@@ -65,7 +65,7 @@ jobs:
         run: ./mvnw clean test -q
         env:
           APIBASEURL: http://localhost:4111
-          UIBASEURL: http://frontend
+          UIBASEURL: http://host.docker.internal
           UIREMOTE: http://localhost:4444/wd/hub/
           DB_URL: jdbc:postgresql://localhost:5433/nbank
           DB_USERNAME: postgres

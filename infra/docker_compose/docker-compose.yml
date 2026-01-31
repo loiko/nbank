@@ -45,7 +45,6 @@ services:
 
   selenoid:
     image: aerokube/selenoid:latest
-    privileged: true
     ports:
       - "4444:4444"
     volumes:
