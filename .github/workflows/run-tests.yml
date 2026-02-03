@@ -65,7 +65,12 @@ jobs:
 
       - name: Build Swagger coverage report
         if: always()
-        run: sudo cp swagger-coverage-report.html allure-history/${{ github.run_number }}
+        run: |
+          if [ -f swagger-coverage-report.html ]; then
+            sudo cp swagger-coverage-report.html allure-history/${{ github.run_number }}/
+          else
+            echo "swagger-coverage-report.html not found"
+          fi
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
@@ -77,5 +82,8 @@ jobs:
 
       - name: Clean up services
         if: always()
-        run: cd infra/docker_compose && docker compose down
-
+        working-directory: ${{ github.workspace }}
+        run: |
+          if [ -d "infra/docker_compose" ]; then
+            cd infra/docker_compose && docker compose down
+          fi
