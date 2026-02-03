@@ -72,6 +72,13 @@ jobs:
             echo "swagger-coverage-report.html not found"
           fi
 
+      - name: Upload Swagger Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-coverage-report
+          path: swagger-coverage-report.html
+
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
@@ -87,3 +94,20 @@ jobs:
           if [ -d "infra/docker_compose" ]; then
             cd infra/docker_compose && docker compose down
           fi
+
+  quality-gate:
+    name: Check Quality Gate
+    needs: run-tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Swagger Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-coverage-report
+
+      - name: Check API Coverage Quality Gate
+        run: bash check-coverage.sh
