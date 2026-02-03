@@ -24,7 +24,7 @@ public class UserDashboard extends BasePage<UserDashboard> {
 
     public UserDashboard createNewAccount() {
         createNewAccountButton.click();
-        RetryUtils.retry(
+        RetryUtils.retry("Create new account in User Dashboard",
                 () -> SessionStorage.getSteps().getAllAccounts(),
                 accounts -> accounts.size() > 0,
                 3,

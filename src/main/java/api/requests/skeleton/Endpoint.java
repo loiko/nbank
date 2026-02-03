@@ -44,13 +44,13 @@ public enum Endpoint {
     ),
 
     PROFILE(
-            "customer/profile",
+            "/customer/profile",
             BaseModel.class,
             RetrieveUserProfileResponseModel.class
     ),
 
     NAME(
-            "customer/profile",
+            "/customer/profile",
             UpdateUserNameRequestModel.class,
             UpdateUserNameResponseModel.class
     ),

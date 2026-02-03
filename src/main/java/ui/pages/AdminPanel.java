@@ -1,10 +1,10 @@
 package ui.pages;
 
 import api.models.CreateUserRequestModel;
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import common.helpers.StepLogger;
 import common.utils.RetryUtils;
 import lombok.Getter;
 import ui.elements.UserBage;
@@ -25,26 +25,32 @@ public class AdminPanel extends BasePage<AdminPanel> {
     }
 
     public AdminPanel createUser(String username, String password) {
-        usernameInput.sendKeys(username);
-        passwordInput.sendKeys(password);
-        addUserButton.click();
-        return this;
+       return StepLogger.log("Create user with username: " + username, () -> {
+            usernameInput.sendKeys(username);
+            passwordInput.sendKeys(password);
+            addUserButton.click();
+            return this;
+        });
     }
 
     public AdminPanel createUser(CreateUserRequestModel newUser) {
-        usernameInput.sendKeys(newUser.getUsername());
-        passwordInput.sendKeys(newUser.getPassword());
-        addUserButton.click();
-        return this;
+        return StepLogger.log("Create user with username: " + newUser.getUsername(), () -> {
+            usernameInput.sendKeys(newUser.getUsername());
+            passwordInput.sendKeys(newUser.getPassword());
+            addUserButton.click();
+            return this;
+        });
     }
 
     public List<UserBage> getAllUsers() {
-        ElementsCollection elementsCollection = $(Selectors.byText("All Users")).parent().findAll("li").shouldHave(sizeGreaterThan(0));
-        return generatePageElements(elementsCollection, UserBage::new);
+        return StepLogger.log("Get all users from Dashboard", () -> {
+            ElementsCollection elementsCollection = $(Selectors.byText("All Users")).parent().findAll("li").shouldHave(sizeGreaterThan(0));
+            return generatePageElements(elementsCollection, UserBage::new);
+        });
     }
 
     public UserBage findUserByUsername(String username) {
-        return RetryUtils.retry(
+        return RetryUtils.retry("Find user by username " + username + " in Admin Panel",
                 () -> getAllUsers().stream().filter(it -> it.getUsername().equals(username)).findAny().orElse(null),
                 result -> result != null,
                 3,
