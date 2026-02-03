@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MIN_COVERAGE=40
+MIN_COVERAGE=50
 
 REPORT_FILE="swagger-coverage-report.html"
 
