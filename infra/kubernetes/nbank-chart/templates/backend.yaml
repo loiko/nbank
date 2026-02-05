@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+      annotations:
+        co.elastic.logs/enabled: "true"
+        co.elastic.logs/module: springboot
+        co.elastic.logs/json.keys_under_root: "true"
+        co.elastic.logs/json.add_error_key: "true"
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.28
+          command: [ 'sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;' ]
+      containers:
+      - name: backend
+        image: {{ .Values.backend.image }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.backend.port }}
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: {{ .Values.backend.env.postgresUrl | quote }}
+          - name: SPRING_DATASOURCE_USERNAME
+            value: {{ .Values.backend.env.postgresUser | quote }}
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: {{ .Values.backend.env.postgresPassword | quote }}
+          - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+            value: "org.postgresql.Driver"
+          - name: FRAUD_DETECTION_SERVICE_URL
+            value: {{ .Values.backend.env.fraudDetectionUrl | quote }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.backend.port }}
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+            tcpSocket:
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 60
+            periodSeconds: 15
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  selector:
+   app: backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.backend.port }}
+      targetPort: {{ .Values.backend.port }}
+      nodePort: {{ .Values.backend.nodePort }}
+  type: NodePort

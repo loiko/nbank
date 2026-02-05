@@ -1,0 +1,31 @@
+replicaCount: 1
+imagePullPolicy: IfNotPresent
+
+backend:
+  image: nobugsme/nbank:with_database_with_fix
+  port: 4111
+  nodePort: 30111
+  env:
+    postgresUrl: jdbc:postgresql://postgres:5432/nbank
+    postgresUser: postgres
+    postgresPassword: postgres
+    fraudDetectionUrl: http://host.docker.internal:8087
+
+frontend:
+  image: nobugsme/nbank-ui:with_nginx_with_send_transfer_fix
+  port: 80
+  nodePort: 30300
+
+postgres:
+  image: postgres:15-alpine
+  port: 5432
+  nodePort: 30543
+  storage: 200Mi
+  database: nbank
+  user: postgres
+  password: postgres
+
+selenoid:
+  image: aerokube/selenoid:latest
+  port: 4444
+  nodePort: 30444
