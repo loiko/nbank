@@ -31,6 +31,7 @@ jobs:
         run: ./mvnw clean test -q
         env:
           APIBASEURL: http://localhost:4111
+          APIVERSION: /api/v1
           UIBASEURL: http://frontend
           UIREMOTE: http://localhost:4444/wd/hub/
           DB_URL: jdbc:postgresql://localhost:5433/nbank
@@ -43,3 +44,70 @@ jobs:
         with:
           name: test-reports
           path: build/reports/tests/
+
+      - name: Run Swagger Coverage
+        if: always()
+        run: ./.swagger-coverage-commandline/bin/swagger-coverage-commandline -s swagger.json -i target/swagger-coverage-output
+
+      - name: Load test report history
+        uses: actions/checkout@v2
+        if: always()
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build test report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: target/allure-results
+          allure_history: allure-history
+
+      - name: Build Swagger coverage report
+        if: always()
+        run: |
+          if [ -f swagger-coverage-report.html ]; then
+            sudo cp swagger-coverage-report.html allure-history/${{ github.run_number }}/
+          else
+            echo "swagger-coverage-report.html not found"
+          fi
+
+      - name: Upload Swagger Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-coverage-report
+          path: swagger-coverage-report.html
+
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+      - name: Clean up services
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          if [ -d "infra/docker_compose" ]; then
+            cd infra/docker_compose && docker compose down
+          fi
+
+  quality-gate:
+    name: Check Quality Gate
+    needs: run-tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Swagger Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-coverage-report
+
+      - name: Check API Coverage Quality Gate
+        run: bash check-coverage.sh
